@@ -5,8 +5,8 @@ module Bank
     @bank += sum
   end
   
-  def give_money(obj, sum)
+  def give_money(player, sum)
     @bank -= sum
-    obj.take_money(sum)
+    player.take_money(sum)
   end
 end
