@@ -1,52 +1,31 @@
-require_relative "bank.rb"
-require_relative "validation.rb"
-
-class Players
+class Player
   include Bank
   include Validation
   
   NAME = /^[A-ZА-Я]{1}[a-zа-я]+$/
   
-  attr_accessor :name, :cards, :score
+  attr_accessor :name, :hand
   validate :name, :presence
   validate :name, :format, NAME
   
   def initialize(name = "Dealler")
     @name = name
     validate!
-    @cards = []
-    @score = 0
     self.bank = 100
+    @hand = Hand.new
   end
   
-  def add_card(card)
-    @cards.push(card)
+  def add_card
+    @hand.cards.push(@hand.deck.create_card)
+    @hand.calculation_score
   end
   
   def delete_cards
-    @cards.clear
-    @score = 0
-  end
-  
-  def calculation_score
-    @score = 0
-    @cards.each do |card|
-      case card.values.first
-      when Integer
-        @score += card.values.first
-      when String
-        @score += 10
-      when Symbol
-        if @score > 10
-          @score += 1
-        else
-          @score += 11
-        end
-      end
-    end
+    @hand.cards.clear
+    @hand.score = 0
   end
   
   def each_cards
-    @cards.each { |card| yield card } if block_given?
+    @hand.cards.each { |card| yield card } if block_given?
   end
 end
